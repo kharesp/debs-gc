@@ -1,4 +1,3 @@
-from collections import namedtuple
 from enum import Enum
 
 class WinSizes(Enum):
@@ -9,5 +8,14 @@ class WinSizes(Enum):
   win_60m= 3600 
   win_120m= 7200 
 
-Reading=namedtuple("Reading","id ts value property plug_id hh_id h_id")
-State=namedtuple("State","last_ts load count")
+class Reading(dict):
+  def __init__(self,**kwargs):
+    self.__dict__.update(kwargs)
+
+class Update(dict):
+  def __init__(self,**kwargs):
+    self.__dict__.update(kwargs)
+
+class State(dict):
+  def __init__(self,**kwargs):
+    self.__dict__.update(kwargs)

@@ -7,10 +7,13 @@ def trigger(source):
   def time(observer):
     last_ts= -1
     def track(reading):
+      print('trigger got reading.ts:%d'%(reading.ts))
       nonlocal last_ts
       modulo= reading.ts % WinSizes.win_30s.value
       if (last_ts==-1):
         last_ts=reading.ts - (WinSizes.win_30s.value if modulo==0 else modulo)
+        observer.on_next(last_ts)
+
       elapsed_time=reading.ts - last_ts
       if (elapsed_time > WinSizes.win_30s.value):
         last_ts = reading.ts - (WinSizes.win_30s.value if modulo==0 else modulo)

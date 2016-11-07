@@ -7,7 +7,7 @@ class StreamingMedian(object):
     self.right=Heap(max=False)
     self.median=0.0
 
-  def getMedian(self):
+  def get_median(self):
     return self.median
 
   def insert(self,value):
@@ -45,5 +45,5 @@ if __name__ == "__main__":
   values=[5,15,1,3,2,8,7,9,10,6,11,4]
   for v in values:
     container.insert(v)
-    m=container.getMedian()
+    m=container.get_median()
     print(m)
