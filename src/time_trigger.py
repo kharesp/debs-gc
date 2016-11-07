@@ -1,4 +1,4 @@
-from common import time_windows
+from common import WinSizes
 import parse
 from rx import Observable
 from rx.subjects import Subject
@@ -8,12 +8,12 @@ def trigger(source):
     last_ts= -1
     def track(reading):
       nonlocal last_ts
-      modulo= reading.ts%time_windows['30s']
+      modulo= reading.ts % WinSizes.win_30s.value
       if (last_ts==-1):
-        last_ts=reading.ts - (time_windows['30'] if modulo==0 else modulo)
+        last_ts=reading.ts - (WinSizes.win_30s.value if modulo==0 else modulo)
       elapsed_time=reading.ts - last_ts
-      if (elapsed_time > time_windows['30s']):
-        last_ts = reading.ts - (time_windows['30'] if modulo==0 else modulo)
+      if (elapsed_time > WinSizes.win_30s.value):
+        last_ts = reading.ts - (WinSizes.win_30s.value if modulo==0 else modulo)
         observer.on_next(last_ts)
    
     source.subscribe(track)

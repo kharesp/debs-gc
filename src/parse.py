@@ -3,13 +3,13 @@ import numpy as np
 from common import Reading
 
 def reading(str_values):
-  return Reading(int(str_values[0]),
-    int(str_values[1]),
-    float(str_values[2]),
-    int(str_values[3]),
-    int(str_values[4]),
-    int(str_values[5]),
-    int(str_values[6]))
+  return Reading(id= int(str_values[0]),
+    ts= int(str_values[1]),
+    value= float(str_values[2]),
+    property= int(str_values[3]),
+    plug_id= int(str_values[4]),
+    hh_id= int(str_values[5]),
+    h_id= int(str_values[6]))
 
 def lines(filename):
   def read_file(observer):
@@ -44,4 +44,3 @@ def extract_h(datafile,h_id):
       filter(lambda r: r.h_id==h_id and r.property==1).\
       subscribe(lambda r: f.write('%d,%d,%f,%d,%d,%d,%d\n' %\
         (r.id,r.ts,r.value,r.property,r.plug_id,r.hh_id,r.h_id)))
-

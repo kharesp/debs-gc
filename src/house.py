@@ -4,7 +4,7 @@ from rx.subjects import Subject
 from plug_model import PlugModel
 
 house_stream= Subject()
-connectable=parse.lines('data/0_0.csv').multicast(house_stream)
+connectable=parse.lines('data/7_0_0.csv').multicast(house_stream)
 triggers=time_trigger.trigger(house_stream)
 
 def plug_processor(hh_id,plug_stream):
