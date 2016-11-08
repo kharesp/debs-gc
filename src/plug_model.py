@@ -2,7 +2,8 @@ from common import State, WinSizes
 from median import StreamingMedian
 
 class PlugModel(object):
-  def __init__(self,hh_id,plug_id):
+  def __init__(self,h_id,hh_id,plug_id):
+    self.h_id=h_id
     self.hh_id=hh_id
     self.plug_id=plug_id
     self.last_ts=-1

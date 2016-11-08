@@ -4,7 +4,7 @@ hwm= 1000000
 address= 'tcp://127.0.0.1:5000'
 
 reading_fields=['id','ts','value','property','plug_id','hh_id','h_id']
-data_file='data/0.csv'
+data_file='data/sorted100M.csv'
 
 class WinSizes(Enum):
   win_30s= 30
