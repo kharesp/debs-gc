@@ -1,4 +1,4 @@
-from common import State, WinSizes 
+from common import State, WinSizes,perf_metrics
 from median import StreamingMedian
 
 class PlugModel(object):
@@ -14,12 +14,10 @@ class PlugModel(object):
       for size in WinSizes}
     self.median_containers= { size.name: {} for size in WinSizes } 
     self.initialized=False
+    self.perf=perf_metrics[self.h_id]
     
   
   def process_update(self,update):
-    #print('process called! reading.ts:%d and last_ts:%d'%\
-    #  (update.reading.ts,update.last_ts))
-
     #cache current reading update
     reading=update.reading
 
@@ -40,6 +38,10 @@ class PlugModel(object):
     
     #process reading update
     self.process_reading(reading)
+   
+    #record perf metrics
+    self.perf.record(update.reception_ts)
+    
 
   def process_time_update(self,reading):
     #if plug update is in sync with global time update, then do nothing
@@ -116,5 +118,6 @@ class PlugModel(object):
       median= median_container[forecast_ts%86400].get_median()
     
     forecast= (avg_load + median)/2
-    print('load forecast hh_id:%d, plug_id:%d, win_size:%s, prediction win_ts:%d, forecast:%f'%\
-      (self.hh_id,self.plug_id,win_size,prediction_window_ts,forecast))
+    #print('load forecast h_id:%d hh_id:%d, plug_id:%d, \
+    #  win_size:%s, prediction win_ts:%d, forecast:%f'%\
+    #  (self.h_id,self.hh_id,self.plug_id,win_size,prediction_window_ts,forecast))

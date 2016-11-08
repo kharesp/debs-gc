@@ -1,0 +1,21 @@
+import common,time
+
+class Perf(object):
+  def __init__(self,id):
+    self.start_ts=time.perf_counter()
+    self.last_ts=-1
+    self.count=0
+    self.tot_processing_time=0
+    self.id=id
+    self.out_file= \
+      open('%s%d.csv'%(common.perf_metrics_path,id),'w')
+
+  def record(self,reception_ts):
+    self.count+=1
+    processing_end_ts=time.perf_counter()
+    self.tot_processing_time+=(processing_end_ts - reception_ts)
+    if(self.count % 10000 == 0):
+      latency=self.tot_processing_time/self.count
+      thput=self.count/(processing_end_ts -self.start_ts)
+      self.out_file.write('%f,%f\n'%(latency,thput))
+      self.out_file.flush()

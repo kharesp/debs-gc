@@ -45,3 +45,8 @@ def extract_h(datafile,h_id):
       filter(lambda r: r.h_id==h_id and r.property==1).\
       subscribe(lambda r: f.write('%d,%d,%f,%d,%d,%d,%d\n' %\
         (r.id,r.ts,r.value,r.property,r.plug_id,r.hh_id,r.h_id)))
+
+if __name__=="__main__":
+  for i in range(1,40):
+    print(i)
+    extract_h('data/sorted100M.csv',i)
