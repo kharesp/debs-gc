@@ -1,8 +1,9 @@
-import parse
+import parse, subscriber, threading
 from rx import Observable
 from rx.subjects import Subject
 from plug_model import PlugModel
 from common import WinSizes,Update
+from rx.concurrency import eventloopscheduler, newthreadscheduler,threadpoolscheduler
 
 last_ts=-1
 def progress_time(reading):
@@ -28,13 +29,25 @@ def hh_processor(hh_id,hh_stream):
     subscribe(lambda plug_stream: plug_processor(hh_id,plug_stream))
   
 
-update_stream= Subject()
-connectable= parse.lines('data/0.csv').\
-  map(progress_time).\
-  multicast(update_stream)
+def test(hh_stream):
+  hh_stream. \
+    observe_on(newthreadscheduler.Scheduler.new_thread). \
+    subscribe(lambda r: \
+      print('Observed hh_id:%d on thread id:%s\n' \
+        %(r.hh_id,threading.current_thread().name)))
 
-update_stream.\
-  group_by(lambda u: u.reading.hh_id).\
-  subscribe(lambda hh_stream: hh_processor(hh_stream.key,hh_stream))
-
-connectable.connect()
+if __name__== "__main__":
+  subscriber.data_stream(). \
+    group_by(lambda r: r.hh_id). \
+    subscribe(test)
+    
+  #update_stream= Subject()
+  #connectable= subscriber.data_stream(). \
+  #  map(progress_time).\
+  #  multicast(update_stream)
+  #
+  #update_stream.\
+  #  group_by(lambda u: u.reading.hh_id).\
+  #  subscribe(lambda hh_stream: hh_processor(hh_stream.key,hh_stream))
+  #
+  #connectable.connect()

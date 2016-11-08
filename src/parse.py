@@ -2,6 +2,7 @@ from rx import Observable
 import numpy as np
 from common import Reading
 
+
 def reading(str_values):
   return Reading(id= int(str_values[0]),
     ts= int(str_values[1]),
