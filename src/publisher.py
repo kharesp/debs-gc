@@ -22,3 +22,4 @@ if __name__=="__main__":
         time.sleep(1)
       
   publisher.close()
+  print('publisher sent %d messages\n'%(count))
