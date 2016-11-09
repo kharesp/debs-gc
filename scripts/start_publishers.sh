@@ -10,6 +10,8 @@ NUM=$2
 let NUM--
 PORT=5000
 
+mkdir -p log
+
 for i in `seq 0 $NUM`; 
 do
   connector_string='tcp://'$ADDRESS':'$PORT

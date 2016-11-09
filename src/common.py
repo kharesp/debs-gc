@@ -4,6 +4,7 @@ hwm= 1000000
 reading_fields=['id','ts','value','property','plug_id','hh_id','h_id']
 perf_metrics_path='perf/'
 perf_metrics={}
+house_forecasts={}
 
 starting_processor_port_num= 5000
 monitoring_port_num= 6000

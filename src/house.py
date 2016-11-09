@@ -1,8 +1,8 @@
-import parse, subscriber, threading, argparse,time
+import parse, subscriber, threading, argparse,time,os
 from rx import Observable
 from rx.subjects import Subject
 from plug_model import PlugModel
-from common import WinSizes,Update,perf_metrics
+from common import WinSizes,Update,perf_metrics,house_forecasts
 from rx.concurrency import eventloopscheduler
 from monitoring import Perf
   
@@ -24,8 +24,13 @@ class Processor(threading.Thread):
       subscribe(lambda plug_stream: self.plug_processor(h_id,hh_id,plug_stream))
     
   def h_processor(self,h_stream):
+    if not os.path.exists('out'):
+      os.makedirs('out')
+
     h_id=h_stream.key
     perf_metrics[h_id]=Perf(h_id)
+    house_forecasts[h_id]=open('out/%d.csv'%h_id,'w')
+    
     last_ts=-1
     def progress_time(t):
       nonlocal last_ts

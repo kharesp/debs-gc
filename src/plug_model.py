@@ -1,4 +1,4 @@
-from common import State, WinSizes,perf_metrics
+from common import State, WinSizes,perf_metrics, house_forecasts
 from median import StreamingMedian
 
 class PlugModel(object):
@@ -15,6 +15,7 @@ class PlugModel(object):
     self.median_containers= { size.name: {} for size in WinSizes } 
     self.initialized=False
     self.perf=perf_metrics[self.h_id]
+    self.result_file=house_forecasts[self.h_id]
     
   
   def process_update(self,update):
@@ -118,6 +119,9 @@ class PlugModel(object):
       median= median_container[forecast_ts%86400].get_median()
     
     forecast= (avg_load + median)/2
+    self.result_file.write('%s,%d,%d,%d,%d,%f\n'% \
+      (win_size,prediction_window_ts,self.h_id,self.hh_id,self.plug_id,forecast))
+    self.result_file.flush()
     #print('load forecast h_id:%d hh_id:%d, plug_id:%d, \
     #  win_size:%s, prediction win_ts:%d, forecast:%f'%\
     #  (self.h_id,self.hh_id,self.plug_id,win_size,prediction_window_ts,forecast))

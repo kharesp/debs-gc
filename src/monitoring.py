@@ -7,9 +7,10 @@ class Perf(object):
     self.count=0
     self.tot_processing_time=0
     self.id=id
-
+    self.stats_file=open('perf/%d.csv'%self.id,'w')
     self.zmq_context=zmq.Context()
     self.sender_socket=self.zmq_context.socket(zmq.PUSH)
+    self.sender_socket.set_hwm(common.hwm)
     self.sender_socket.connect('tcp://127.0.0.1:%d'% \
       (common.monitoring_port_num))
 
@@ -18,8 +19,10 @@ class Perf(object):
     processing_end_ts=time.perf_counter()
     self.tot_processing_time+=(processing_end_ts - reception_ts)
     if(self.count % 10000 == 0):
+      ts= time.time()
       latency=self.tot_processing_time/self.count
       thput=self.count/(processing_end_ts -self.start_ts)
-      print('h_id:%d latency:%f thput:%f\n'%(self.id,latency,thput))
-      self.sender_socket.send_pyobj(common.Stats(h_id=self.id,\
+      self.sender_socket.send_pyobj(common.Stats(ts=ts,h_id=self.id,\
         latency=latency,throughput=thput))
+      self.stats_file.write('%d,%d,%f,%f\n'%(ts,self.id,latency,thput))
+      self.stats_file.flush()
