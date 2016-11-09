@@ -1,4 +1,4 @@
-import argparse,common
+import argparse,common, multiprocessing
 from house import Processor
 
 
@@ -12,9 +12,8 @@ if __name__=="__main__":
     help='number of house processors to start')
   args=parser.parse_args()
  
-  port_number= 5000
+  port_number= common.starting_processor_port_num
   for i in range(args.num_processors):
     connector_string='tcp://%s:%d'%(args.server_address,port_number)
     port_number+=1
-    print(connector_string)
     Processor(connector_string).start()
