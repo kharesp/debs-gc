@@ -28,4 +28,4 @@ if __name__=="__main__":
       f.write('%d,%f,%f\n'%(time.time(),(sum_latency/count),(sum_throughput/count)))
       f.flush()
        
-    data_stream('tcp://127.0.0.1:%d'%common.monitoring_port_num).subscribe(process)
+    data_stream('tcp://*:%d'%common.monitoring_port_num).subscribe(process)
