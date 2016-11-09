@@ -50,7 +50,6 @@ class Processor(threading.Thread):
       subscribe(lambda hh_stream: self.hh_processor(h_id,hh_stream))
 
   def run(self):
-    print('Processor on tid:%s'%threading.current_thread().name) 
     subscriber.data_stream(self.address).\
       map(lambda r: {'reading':r,'reception_ts':time.perf_counter()}). \
       group_by(lambda t: t['reading'].h_id). \
