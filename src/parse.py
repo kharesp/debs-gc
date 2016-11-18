@@ -18,8 +18,9 @@ def lines(filename):
       for line in f:
         observer.on_next(line)
       observer.on_completed() 
-  
-  return Observable.create(read_file).map(lambda line: reading(line.split(',')))
+    
+  return Observable.create(read_file).\
+    map(lambda line: reading(line.split(',')))
 
 def extract_plug_hh_h(datafile,plug_id,hh_id,h_id):
   outfile='data/%d_%d_%d.csv'%(plug_id,hh_id,h_id)
