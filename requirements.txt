@@ -1,2 +1,3 @@
 pyzmq
+pymongo
 rx

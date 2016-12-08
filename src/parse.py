@@ -12,9 +12,18 @@ def reading(str_values):
     hh_id= int(str_values[5]),
     h_id= int(str_values[6]))
 
+def read(filename):
+  def read_file(observer):
+    with open(filename,'r') as f:
+      for line in f:
+        observer.on_next(line.rstrip())
+      observer.on_completed() 
+    
+  return Observable.create(read_file)
+
 def lines(filename):
   def read_file(observer):
-    with open(filename) as f:
+    with open(filename,'r') as f:
       for line in f:
         observer.on_next(line)
       observer.on_completed() 
@@ -47,7 +56,32 @@ def extract_h(datafile,h_id):
       subscribe(lambda r: f.write('%d,%d,%f,%d,%d,%d,%d\n' %\
         (r.id,r.ts,r.value,r.property,r.plug_id,r.hh_id,r.h_id)))
 
+def extract_subset(filename,duration):
+  def read_file(observer):
+    with open(filename) as f:
+      first_ts=-1
+      for line in f:
+        r=reading(line.split(','))
+        if (first_ts==-1):
+          first_ts=r.ts
+        if ((r.ts-first_ts) < (duration)):
+          observer.on_next(r)
+        else:
+          observer.on_completed() 
+          break
+    
+  return Observable.create(read_file)
+
+def write_readings_stream(stream,outfile):
+  with open(outfile,'w') as f:
+    def on_next(r):
+      f.write('%d,%d,%f,%d,%d,%d,%d\n' %\
+        (r.id,r.ts,r.value,r.property,r.plug_id,r.hh_id,r.h_id))
+    def on_completed():
+      f.close()
+
+    stream.subscribe(on_next=on_next,on_error=None,on_completed=on_completed)
+
 if __name__=="__main__":
-  for i in range(1,40):
-    print(i)
-    extract_h('data/sorted100M.csv',i)
+  write_readings_stream(extract_subset('data/full/sorted.csv',14*24*3600),\
+    'data/2weeks/sorted.csv')
