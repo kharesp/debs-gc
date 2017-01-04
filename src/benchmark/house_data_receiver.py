@@ -24,16 +24,16 @@ class Receiver(object):
       else:
         self.db.create_collection(collection_name) 
         self.db[collection_name].create_index([('ts',pymongo.ASCENDING)])
-        print('created collection %s in db\n'%collection_name)
+        #print('created collection %s in db\n'%collection_name)
         self.hh_collections.add(collection_name)
         
   def insert(self,msg):
     collection_name='%s_%s'%(msg['hh_id'],msg['h_id'])
     self.check_collection_exists(collection_name)
-    expired_ts= msg['ts']-common.window_size
-    res=self.db['0_0'].delete_many({'ts': {'$lt': expired_ts}})
-    if (res.deleted_count>0):
-      print('Deleting %d data samples\n'%res.deleted_count)
+    #expired_ts= msg['ts']-common.window_size
+    #res=self.db['0_0'].delete_many({'ts': {'$lt': expired_ts}})
+    #if (res.deleted_count>0):
+    #  print('Deleting %d data samples\n'%res.deleted_count)
     self.db[collection_name].insert_one(msg)
  
   def print_collection_contents(self,collection_name):
@@ -52,6 +52,7 @@ class Receiver(object):
     print('Receiver for house:%d started\n'%self.h_id)
     while True:
       topic,msg= self.deserialize(sub.recv_string())
+      #print('received msg:%s\n'%msg)
       self.insert(msg)
 
 if __name__ == "__main__":

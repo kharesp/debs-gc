@@ -17,6 +17,7 @@ class Sender(object):
     self.send()
 
   def send(self):
+    sent_count=0
     context= zmq.Context()
     pub= context.socket(zmq.PUSH)
     pub.connect('tcp://%s:%d'%(self.server_address,self.zmq_port))
@@ -35,13 +36,17 @@ class Sender(object):
         'h_id':self.h_id, 'hh_id':self.hh_id, 'plugs':{}}
       hh_load=0
       for plug_id,f in plugs.items():
-        plug_load=float(f.readline().rstrip().split(',')[1])
-        msg['plugs'][plug_id]=plug_load
-        hh_load+=plug_load
+        current_reading=f.readline().rstrip()
+        if current_reading:
+          plug_load=float(current_reading.split(',')[1])
+          msg['plugs'][plug_id]=plug_load
+          hh_load+=plug_load
 
       msg['hh_load']=hh_load
 
       pub.send_string(self.serialize(msg))
+      sent_count+=1
       time.sleep(.1)
 
     (plug.close() for plug in plugs.values())
+    print("Sent %d messages for hh_id:%d\n"%(sent_count,self.hh_id))

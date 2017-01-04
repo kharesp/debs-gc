@@ -1,4 +1,4 @@
-import common
+import common,time
 from pymongo import MongoClient
 from functools import reduce
 from LoadModel_V1 import LoadModel
@@ -6,11 +6,14 @@ from LoadModel_V1 import LoadModel
 class Processor(object):
   def __init__(self):
     self.client=MongoClient()
+    self.start_time=-1
 
   def process(self,query):
     if (query['query_type']== common.QueryType.load.name):
+      self.start_time=time.time()
       self.load(query)
     elif (query['query_type']== common.QueryType.outlier.name):
+      self.start_time=time.time()
       self.outlier(query)
     else:
       print('query_type:%s not recognized\n'%query['query_type'])
@@ -32,6 +35,7 @@ class Processor(object):
     target_plug=query['query_target']
     plug_id,hh_id,h_id=target_plug.split('_')
     cursor=self.client['load_%s'%h_id]['%s_%s'%(hh_id,h_id)].find()
+    print('Retrieved %d samples\n'%cursor.count())
     DT=[]
     V=[]
     X=[]
@@ -41,8 +45,6 @@ class Processor(object):
 
     modified_DT,modified_V= self.\
       curate_for_granularity(query['granularity'],DT,V) 
-    print(modified_DT)
-    print(modified_V)
 
     [X.append([modified_V[i-1]] + modified_DT[i]) \
       for i in range(1,len(modified_DT))]
@@ -53,6 +55,7 @@ class Processor(object):
     target_hh=query['query_target']
     hh_id,h_id=target_hh.split('_')
     cursor=self.client['load_%s'%h_id][target_hh].find()
+    print('Retrieved %d samples\n'%cursor.count())
     DT=[]
     V=[]
     X=[]
@@ -78,6 +81,7 @@ class Processor(object):
     DT=[] 
     V=[]
     X=[]
+    print('Retrieved %d samples\n'%cursor_0.count())
     for i in range(0,cursor_0.count()):
       curr_elem=cursor_0.next() 
       DT.append([curr_elem['weekday'],curr_elem['index']])
@@ -109,6 +113,8 @@ class Processor(object):
   def train(self,X,Y):
     gp_model=LoadModel(X,Y)
     hyperparams=gp_model.train_model()
+    end_time=time.time()
+    print('Took %d time to train model\n'%(end_time-self.start_time))
 
   def outlier(self,query):
     print('Received outlier query')
