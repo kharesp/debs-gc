@@ -5,8 +5,8 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 
-STARTING_HID=$2
-ENDING_HID=$3
+STARTING_HID=$1
+ENDING_HID=$2
 
 BASE_PORT_NUMBER=5000
 

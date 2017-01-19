@@ -1,3 +1,7 @@
 pyzmq
 pymongo
 rx
+numpy
+scipy
+matplotlib
+pyGps

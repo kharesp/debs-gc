@@ -12,8 +12,6 @@ def send_house_data(h_id,server_address,zmq_port):
   for t in threads:
     t.start()
 
-  #threading.Thread(target=Sender(h_id=h_id,hh_id=0,\
-  #  server_address=server_address,zmq_port=zmq_port).run).start()
 
 
 if __name__=="__main__":
